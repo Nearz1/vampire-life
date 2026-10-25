@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vampire Life — Guia</title>
+<meta name="description" content="Guia oficial e direto ao ponto do jogo Vampire Life no Roblox: raças, habilidades, NPCs, game passes, comandos e códigos.">
+<link rel="icon" href="assets/img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --surface: #141417;
+    --surface-2: #1b1b1f;
+    --line: #2a2a30;
+    --text: #ececef;
+    --muted: #a3a3ad;
+    --red: #e3263a;
+    --red-soft: rgba(227, 38, 58, .12);
+    --radius: 12px;
+    --max: 1040px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 Inter, system-ui, sans-serif;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--red); }
+  h1, h2, h3 { font-family: Cinzel, Georgia, serif; line-height: 1.2; margin: 0 0 .5em; }
+  h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+  h3 { font-size: 1.05rem; font-family: Inter, sans-serif; font-weight: 600; }
+  p { margin: 0 0 .8em; }
+  code, kbd {
+    font: 500 .9em ui-monospace, Consolas, monospace;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    padding: .1em .4em;
+    border-radius: 6px;
+  }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--red); color: #fff; padding: 8px 12px; border-radius: 8px; z-index: 99; }
+  .skip:focus { left: 8px; }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+
+  /* Header / nav */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(11, 11, 13, .9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-family: Cinzel, serif; font-weight: 700; white-space: nowrap; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  nav.links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+  nav.links::-webkit-scrollbar { display: none; }
+  nav.links a {
+    color: var(--muted); text-decoration: none; font-size: .9rem;
+    padding: 6px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  nav.links a:hover, nav.links a.active { color: var(--text); background: var(--surface-2); }
+
+  /* Hero */
+  .hero { position: relative; text-align: center; padding: 48px 0 40px; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(11,11,13,.55), var(--bg)), url(assets/img/shot1.png) center/cover;
+    opacity: .5; z-index: -1;
+  }
+  .hero .logo { width: min(520px, 90%); margin: 0 auto 12px; mix-blend-mode: lighten; }
+  .hero p.lead { color: var(--muted); max-width: 560px; margin: 0 auto 24px; font-size: 1.05rem; }
+  .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 18px; border-radius: 10px; font-weight: 600; text-decoration: none;
+    border: 1px solid var(--line); color: var(--text); background: var(--surface);
+  }
+  .btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn:hover { filter: brightness(1.12); }
+  .stats { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; margin-top: 28px; color: var(--muted); font-size: .9rem; }
+  .stats b { display: block; color: var(--text); font-size: 1.3rem; }
+
+  /* Search */
+  .search { margin: 0 auto 8px; max-width: 520px; position: relative; }
+  .search input {
+    width: 100%; padding: 13px 16px 13px 42px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--text); font: inherit;
+  }
+  .search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .search-hint { text-align: center; color: var(--muted); font-size: .85rem; min-height: 1.4em; }
+
+  /* Sections */
+  section.block { padding: 40px 0; border-top: 1px solid var(--line); }
+  .sub { color: var(--muted); margin-top: -.3em; margin-bottom: 20px; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px;
+  }
+  .card ul, .card ol { margin: 0; padding-left: 1.2em; }
+  .card li { margin: .2em 0; }
+  .card .muted, .muted { color: var(--muted); font-size: .9rem; }
+  .tag {
+    display: inline-block; font-size: .75rem; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+    background: var(--red-soft); color: #ff7b88; vertical-align: middle; margin-left: 6px;
+  }
+  .note {
+    border-left: 3px solid var(--red); background: var(--surface); padding: 10px 14px;
+    border-radius: 0 8px 8px 0; color: var(--muted); font-size: .9rem; margin: 14px 0 0;
+  }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--surface-2); font-weight: 600; font-size: .85rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* Path steps */
+  .paths { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+  .path .emoji { font-size: 1.8rem; line-height: 1; margin-bottom: 8px; }
+
+  /* Level bar for farming */
+  .farm { display: grid; gap: 10px; }
+  .farm-row { display: grid; grid-template-columns: 180px 1fr; gap: 14px; align-items: center; }
+  .farm-row .bar { position: relative; height: 30px; background: var(--surface-2); border-radius: 8px; }
+  .farm-row .fill {
+    position: absolute; top: 0; bottom: 0; border-radius: 8px;
+    background: linear-gradient(90deg, #7a1420, var(--red));
+    display: flex; align-items: center; padding: 0 10px; font-size: .8rem; font-weight: 600; color: #fff; white-space: nowrap;
+  }
+  .farm-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: .75rem; margin-left: 194px; }
+
+  /* Passes */
+  .pass { display: flex; gap: 14px; align-items: flex-start; }
+  .pass img { width: 64px; height: 64px; border-radius: 12px; flex-shrink: 0; }
+  .price { color: #ffcf5c; font-weight: 600; font-size: .9rem; }
+
+  /* Codes */
+  .codes { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+  .code {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px;
+  }
+  .code b { font-family: ui-monospace, Consolas, monospace; letter-spacing: .02em; word-break: break-all; }
+  .copy {
+    background: var(--surface-2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 8px; padding: 6px 10px; font: 600 .8rem Inter, sans-serif; cursor: pointer; flex-shrink: 0;
+  }
+  .copy:hover { border-color: var(--red); }
+  .copy.ok { background: var(--red); border-color: var(--red); color: #fff; }
+
+  /* Color swatches */
+  .swatches { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); margin-top: 12px; }
+  .swatch { display: flex; align-items: center; gap: 8px; font-size: .85rem; background: var(--surface-2); border-radius: 8px; padding: 6px 8px; border: 1px solid var(--line); cursor: pointer; color: var(--text); font-family: inherit; text-align: left; }
+  .swatch i { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(255,255,255,.25); flex-shrink: 0; }
+  .swatch small { color: var(--muted); display: block; font-family: ui-monospace, Consolas, monospace; }
+
+  details.card summary { cursor: pointer; font-weight: 600; }
+  details.card[open] summary { margin-bottom: 10px; }
+
+  .hidden { display: none !important; }
+  mark { background: rgba(227,38,58,.35); color: inherit; border-radius: 3px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: .85rem; text-align: center; }
+
+  .totop {
+    position: fixed; right: 16px; bottom: 16px; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--red); color: #fff; border: 0; font-size: 1.2rem; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .totop.show { opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 640px) {
+    .brand span { display: none; }
+    .farm-row { grid-template-columns: 1fr; gap: 4px; }
+    .farm-scale { margin-left: 0; }
+    th, td { padding: 8px 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img src="assets/img/icon.png" alt=""><span>Vampire Life</span></a>
+    <nav class="links" aria-label="Seções">
+      <a href="#comece">Comece</a>
+      <a href="#vampiros">Vampiros</a>
+      <a href="#lobisomens">Lobisomens</a>
+      <a href="#bruxas">Bruxas</a>
+      <a href="#hibrido">Híbrido OG</a>
+      <a href="#humanos">Humanos</a>
+      <a href="#npcs">NPCs</a>
+      <a href="#passes">Passes</a>
+      <a href="#comandos">Comandos</a>
+      <a href="#codigos">Códigos</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo">
+  <div class="hero" id="inicio">
+    <div class="wrap">
+      <h1 class="hidden">Vampire Life</h1>
+      <img class="logo" src="assets/img/logo.png" alt="Vampire Life">
+      <p class="lead">MMORPG de sobrevivência no Roblox. Vire vampiro, lobisomem ou bruxa, suba de nível e domine o servidor. Tudo o que você precisa saber, num lugar só.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://www.roblox.com/games/122287678911982/Vampire-life" target="_blank" rel="noopener">▶ Jogar no Roblox</a>
+        <a class="btn" href="#codigos">🎟️ Ver códigos</a>
+      </div>
+      <div class="stats" aria-label="Números do jogo (25/10/2026)">
+        <div><b>5,9 mi+</b>visitas</div>
+        <div><b>40 mil+</b>favoritos</div>
+        <div><b>20</b>jogadores por servidor</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="search" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label for="q" class="hidden">Buscar no guia</label>
+      <input id="q" type="search" placeholder="Buscar: Neck Break, velas, nível 800, código…" autocomplete="off">
+    </div>
+    <p class="search-hint" id="hint" aria-live="polite"></p>
+
+    <!-- COMECE AQUI -->
+    <section class="block" id="comece">
+      <h2>Comece aqui</h2>
+      <p class="sub">Todo mundo nasce <strong>humano</strong> (ou com 1% de chance, vampiro natural). Escolha seu caminho:</p>
+      <div class="paths">
+        <div class="card path">
+          <div class="emoji">🧛</div>
+          <h3>Virar vampiro</h3>
+          <ol>
+            <li>Um vampiro nível 150+ usa <strong>Infect</strong> em você.</li>
+            <li>Morda um NPC ou jogador que não seja vampiro.</li>
+            <li>Pronto: você é um Vampiro Normal.</li>
+          </ol>
+        </div>
+        <div class="card path">
+          <div class="emoji">🐺</div>
+          <h3>Virar lobisomem</h3>
+          <ol>
+            <li>Leve um arranhão de um lobisomem.</li>
+            <li>Chance de infecção: <strong>5%</strong> por arranhão.</li>
+          </ol>
+        </div>
+        <div class="card path">
+          <div class="emoji">🔮</div>
+          <h3>Virar bruxa</h3>
+          <ol>
+            <li>Ache o <strong>livro</strong> que aparece aleatoriamente no mapa (geralmente na floresta).</li>
+            <li>Pegue-o para desbloquear os poderes.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:14px">
+        <div class="card">
+          <h3>📈 Como evoluir</h3>
+          <ul>
+            <li>Derrote NPCs do seu nível (veja <a href="#npcs">onde farmar</a>).</li>
+            <li>Faça missões: dão XP e dinheiro.</li>
+            <li>Venda minérios no <strong>Ore Buyer</strong>.</li>
+            <li>Use <a href="#codigos">códigos</a> de XP em dobro.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>💡 Dicas para iniciantes</h3>
+          <ul>
+            <li>Comece por inimigos fáceis e suba aos poucos.</li>
+            <li>Leia o objetivo das missões e volte ao NPC quando pedir.</li>
+            <li>Confira preços antes de comprar.</li>
+            <li>Cuidado à noite e na <strong>Lua de Sangue</strong>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🎟️ Resgatar códigos</h3>
+          <ol>
+            <li>Abra as configurações (engrenagem).</li>
+            <li>Vá na aba <strong>Codes</strong>.</li>
+            <li>Digite o código exatamente como está e confirme.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- VAMPIROS -->
+    <section class="block" id="vampiros">
+      <h2>🧛 Vampiros</h2>
+      <p class="sub">A raça principal. Habilidades desbloqueiam por nível.</p>
+
+      <h3>Habilidades</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nível</th><th>Habilidade</th><th>O que faz</th><th>Recarga</th></tr></thead>
+          <tbody>
+            <tr><td class="num">Inicial</td><td>🩸 Blood Sucking</td><td>Morde, causa dano leve e recupera sangue. Em outro vampiro, impede a regeneração dele.</td><td class="num">—</td></tr>
+            <tr><td class="num">Inicial</td><td>👁️ Vampiric Vision</td><td>Revela órgãos e ajuda a localizar criaturas à distância.</td><td class="num">—</td></tr>
+            <tr><td class="num">5</td><td>💥 Neck Break</td><td>Quebra o pescoço do alvo.</td><td class="num">18 s</td></tr>
+            <tr><td class="num">20</td><td>🌀 Hypnosis</td><td>Controla jogadores ou NPCs por 15 segundos.</td><td class="num">—</td></tr>
+            <tr><td class="num">100</td><td>🦇 Ceiling Sleep</td><td>Dorme pendurado no teto para ganhar XP devagar.</td><td class="num">—</td></tr>
+            <tr><td class="num">150</td><td>🧬 Infect</td><td>Infecta humanos para começar a transformação.</td><td class="num">8 s</td></tr>
+            <tr><td class="num">150</td><td>❤️ Heart Extraction</td><td>Arranca um coração; comê-lo dá uma vida extra contra golpe letal.</td><td class="num">90 s</td></tr>
+            <tr><td class="num">800</td><td>👑 Bloodline</td><td>Controla e transforma humanos; você ganha 50% do XP deles. Membros ficam livres no nível 300. <a href="#comandos">Comandos</a></td><td class="num">—</td></tr>
+            <tr><td class="num">3000</td><td>🌋 Ground Stomp</td><td>Onda de choque no chão. Segure o botão de soco. Antes era exclusivo dos Originais.</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid" style="margin-top:18px">
+        <div class="card">
+          <h3>📈 Ranks por nível</h3>
+          <ul>
+            <li>Rookie: 0–50</li>
+            <li>Bloodthirsty: 51–200</li>
+            <li>Experienced: 201–400</li>
+            <li>Ancient: 401+</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🏆 Títulos especiais</h3>
+          <ul>
+            <li>⚡ <strong>Speedster</strong>: vença 50+ Clashes (prioridade máxima)</li>
+            <li>🛡️ <strong>Guard Assassin</strong>: mate 400+ guardas</li>
+            <li>🔮 <strong>Witch Hunter</strong>: mate 100+ bruxas</li>
+          </ul>
+          <p class="muted" style="margin-top:8px">Só um título aparece, e ele substitui o rank.</p>
+        </div>
+        <div class="card">
+          <h3>🌳 Skill Tree</h3>
+          <ul>
+            <li>🏃 Velocidade de corrida</li>
+            <li>❤️ Regeneração</li>
+            <li>💤 XP do Ceiling Sleep</li>
+            <li>⚡ Reflexos vampíricos</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Variantes de vampiro</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Variante</th><th>Como conseguir</th><th>Efeito</th></tr></thead>
+          <tbody>
+            <tr><td>Natural</td><td>1% de chance ao nascer</td><td>Sem diferença relevante do Normal.</td></tr>
+            <tr><td>Normal</td><td>Transformado por outro vampiro</td><td>Padrão.</td></tr>
+            <tr><td>Cannibal</td><td>5% ao beber sangue de outro vampiro</td><td>+20% velocidade, força e vida. 20% de chance de perder ao beber sangue humano ou de bruxa.</td></tr>
+            <tr><td>Cannibal Raised</td><td>1% ao ser transformado por um Cannibal</td><td>+20% velocidade, força e vida. <strong>Permanente.</strong></td></tr>
+            <tr><td>Original</td><td><a href="#passes">Game Pass</a></td><td>Mais força e resistência. Vulnerável só à White Oak Ash Dagger.</td></tr>
+            <tr><td>Vegan <span class="tag">em breve</span></td><td>Alimentar-se só de ratos</td><td>Apenas uma tag. Bônus não confirmados.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LOBISOMENS -->
+    <section class="block" id="lobisomens">
+      <h2>🐺 Lobisomens</h2>
+      <p class="sub">Fortes e brutais. Ainda há poucos detalhes confirmados.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>🐾 Transformação</h3>
+          <p>Um lobisomem arranha o jogador. Chance de infecção: <strong>5%</strong>.</p>
+        </div>
+        <div class="card">
+          <h3>🍖 Fome</h3>
+          <p>Lobisomens têm barra de fome. Alimente-se comendo corpos caídos no chão.</p>
+        </div>
+        <div class="card">
+          <h3>🌕 Transformação avançada</h3>
+          <p>Chegue ao nível <strong>750</strong> e coma a carne de outro lobisomem ao menos uma vez para desbloquear permanentemente.</p>
+        </div>
+      </div>
+      <details class="card" style="margin-top:14px">
+        <summary>📢 Mudanças anunciadas <span class="tag">em breve</span></summary>
+        <ul>
+          <li>O lobisomem mais forte vira <strong>Alfa</strong> (+20% de bônus).</li>
+          <li>20+ skins novas.</li>
+          <li>Ataques venenosos contra vampiros.</li>
+          <li>Não podem morder Vampiros Originais.</li>
+          <li>Uivo que chama outros lobisomens.</li>
+          <li>Recargas menores e animações mais suaves.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- BRUXAS -->
+    <section class="block" id="bruxas">
+      <h2>🔮 Bruxas</h2>
+      <p class="sub">Magia, rituais e crafting. Bruxas não têm Skill Tree: tudo vem do nível.</p>
+
+      <h3>Feitiços</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nível</th><th>Feitiço</th><th>O que faz</th><th>Recarga</th></tr></thead>
+          <tbody>
+            <tr><td class="num">Inicial</td><td>✨ Fists</td><td>Mãos brilham roxo e lançam orbes mágicos de médio alcance.</td><td class="num">—</td></tr>
+            <tr><td class="num">Inicial</td><td>🖤 Soul Drain</td><td>Drena a alma, levita o alvo, causa bastante dano e cura você.</td><td class="num">38 s</td></tr>
+            <tr><td class="num">15</td><td>🪨 Petrification</td><td>Petrifica jogadores e NPCs temporariamente.</td><td class="num">25 s</td></tr>
+            <tr><td class="num">25</td><td>💪 Strength</td><td>+20% de força em um aliado ou NPC (não acumula). Frase: “Strength!”</td><td class="num">38 s</td></tr>
+            <tr><td class="num">25</td><td>👻 Invisibility</td><td>Fica invisível e mais rápida. Ainda pode ser atingida.</td><td class="num">—</td></tr>
+            <tr><td class="num">50</td><td>💥 Neck Break</td><td>Levanta o alvo e quebra o pescoço.</td><td class="num">15 s</td></tr>
+            <tr><td class="num">100</td><td>❤️ Heart Extraction</td><td>Arranca um coração que dá vida extra ao ser comido.</td><td class="num">90 s</td></tr>
+            <tr><td class="num">140</td><td>😖 Inflict Pain</td><td>Dor intensa no alvo. Sem mana, a bruxa passa a tomar dano.</td><td class="num">35 s</td></tr>
+            <tr><td class="num">300</td><td>🌀 Telekinesis</td><td>Levanta, move, prende e arremessa um jogador à distância.</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid" style="margin-top:18px">
+        <div class="card">
+          <h3>🏷️ Ranks por nível</h3>
+          <ul>
+            <li>Novice: 0–24</li>
+            <li>Adept: 25–49</li>
+            <li>Gifted: 50–74</li>
+            <li>Powerful: 75–99</li>
+            <li>Elder: 100–399</li>
+            <li>Ancient: 400–799</li>
+            <li>Sacred: 800+</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>👑 Supreme Witch</h3>
+          <p>A bruxa de maior nível do servidor ganha, sem custo extra de mana:</p>
+          <ul>
+            <li>+10% dano mágico</li>
+            <li>+10% poder e duração do Strength</li>
+            <li>+10% duração da Petrification</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🛒 Loja da bruxa</h3>
+          <ul>
+            <li>🧹 Vassoura: <strong>15.000</strong> (mais rápida, tem durabilidade)</li>
+            <li>🎒 Bolsa: <strong>1.300</strong> (não perde itens ao morrer/sair)</li>
+            <li>🕯️ Vela: <strong>300</strong> (máx. 5 por jogador)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Rituais</h3>
+      <div class="grid">
+        <div class="card">
+          <h3>🕯️ Meditação</h3>
+          <ul>
+            <li>5 velas em pentagrama, a 2–3 passos do centro.</li>
+            <li>Aparece o botão <strong>Meditate</strong>.</li>
+            <li><strong>+1 nível a cada 15 min</strong>, invulnerável.</li>
+            <li>Acaba se você se afastar ou mexerem nas velas.</li>
+            <li>Clique duas vezes na vela para removê-la.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔎 Rastreamento</h3>
+          <ul>
+            <li>3 velas em triângulo + um coração no centro.</li>
+            <li>Digite no chat: <code>Quaerere NomeDoJogador</code></li>
+            <li>Rastreia alguém que está no servidor.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🖤 Imortalidade <span class="tag">nível 2000+</span></h3>
+          <ul>
+            <li>Digite no chat: <code>Sanguis tuus vita mea</code></li>
+            <li>Clique num Vampiro Original em até 10 s.</li>
+            <li>Dura enquanto esse Original estiver vivo e no servidor.</li>
+            <li>Espera de 20 min para refazer.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🛡️ Praesidium</h3>
+          <p>Proteção contra vampiros, feita na Spell Table com sangue de vampiro + verbena. Vampiro e bruxa precisam ser nível 100+.</p>
+          <ul>
+            <li>🍷 Cálice: 800 moedas → 20 min</li>
+            <li>🛡️ Prato: 3.000 moedas → 40 min</li>
+          </ul>
+          <p class="muted" style="margin-top:8px">Quem atacar pode hibernar ao morder ou morrer ao tentar Neck Break.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Crafting</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Bruxa</th><th>Ingredientes</th><th>Onde</th><th>Efeito</th></tr></thead>
+          <tbody>
+            <tr><td>💍 Sun Ring</td><td class="num">100+</td><td>1 coração + 1 anel de metal</td><td>Magic Altar</td><td>Só resistência ao sol (não dá os bônus do Game Pass).</td></tr>
+            <tr><td>🗡️ White Oak Ash Dagger</td><td class="num">800+</td><td>1 adaga + 1 White Oak Stake</td><td>Spell Table</td><td>Só afeta Originais. Vença o Clash para cravar; imobiliza até ser removida.</td></tr>
+            <tr><td>🧪 Inhuman</td><td class="num">1000+</td><td>Coração + sangue de vampiro + adaga comum</td><td>—</td><td>Original fica imune à adaga por 5 h e pode devolvê-la ao atacante.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">📍 <strong>Magic Altar:</strong> floresta perto da borda do mapa. Siga a estrada para a vila da igreja, pegue a esquerda na bifurcação e siga até o altar.</p>
+
+      <details class="card" style="margin-top:14px">
+        <summary>🐀 Domesticar ratos <span class="tag">em breve</span></summary>
+        <p>Bruxas poderão domar ratos e usá-los como ladrões para farmar XP. Hoje os ratos já roubam itens largados no chão e levam para a toca, então cuidado ao dropar itens. Como domar e quanto XP rende ainda não foi confirmado.</p>
+      </details>
+    </section>
+
+    <!-- HIBRIDO -->
+    <section class="block" id="hibrido">
+      <h2>🐺🩸 Híbrido OG</h2>
+      <p class="sub">A forma mais rara do jogo. Anunciada pelo dev em 23/10/2026.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>✅ Requisitos</h3>
+          <ul>
+            <li>Game Pass <strong>Original Vampire</strong></li>
+            <li>Nível <strong>5000 como vampiro</strong> e <strong>5000 como lobisomem</strong></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔁 Como acontece</h3>
+          <ul>
+            <li>🧛 Sendo vampiro: leve arranhão/mordida de lobisomem.</li>
+            <li>🐺 Sendo lobisomem: receba sangue de vampiro.</li>
+            <li>🎲 Chance: ~<strong>0,9%</strong> (90 em 10.000).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔒 Quem infecta</h3>
+          <p>Precisa ter <strong>nível 1000+</strong>. Um Híbrido OG pode infectar usando as duas formas: dando sangue (vampiro) ou arranhando (lobisomem).</p>
+        </div>
+      </div>
+      <p class="note">Status, habilidades e recargas do Híbrido ainda não foram confirmados.</p>
+    </section>
+
+    <!-- HUMANOS -->
+    <section class="block" id="humanos">
+      <h2>🗡️ Humanos</h2>
+      <p class="sub">A raça mais comum e o ponto de partida de todas as transformações.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>⚔️ Armas</h3>
+          <p>Humanos podem usar estacas e armas contra vampiros. Compre na <a href="#npcs-loja">Weapons Shop</a>.</p>
+        </div>
+        <div class="card">
+          <h3>⚠️ Alvo fácil</h3>
+          <p>Podem ser alvo de Hypnosis, Infect e feitiços de bruxa. Guardas atacam humanos que agridem NPCs.</p>
+        </div>
+        <div class="card">
+          <h3>🏹 Vampire Hunter <span class="tag">em breve</span></h3>
+          <p>Classe de caçador em desenvolvimento. Também foi anunciado um sistema de comida com atributos para humanos e bruxas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NPCS -->
+    <section class="block" id="npcs">
+      <h2>👹 NPCs</h2>
+      <p class="sub">Onde farmar de acordo com seu nível, e quem dá missões.</p>
+
+      <h3>Onde farmar</h3>
+      <div class="card">
+        <div class="farm" id="farm"></div>
+        <div class="farm-scale" aria-hidden="true"><span>0</span><span>2000</span><span>4000</span><span>6000</span><span>8000</span></div>
+      </div>
+
+      <div class="grid" style="margin-top:14px">
+        <div class="card">
+          <h3>🧍 Humanos <span class="tag">0–70</span></h3>
+          <p>Sem habilidades: só socam ou fogem. Fogem de vampiros, Originais e Híbridos.</p>
+        </div>
+        <div class="card">
+          <h3>🛡️ Guardas <span class="tag">70–250</span></h3>
+          <p>Mais fortes. Atacam quem agride NPCs humanos. Fogem de lobisomens, Originais e Híbridos.</p>
+        </div>
+        <div class="card">
+          <h3>🏹 Caçadores <span class="tag">250–2900</span></h3>
+          <ul>
+            <li>Área 1: nível ~250–700</li>
+            <li>Área 2: nível ~1000–2900</li>
+          </ul>
+          <p class="muted" style="margin-top:6px">Variantes: 👊 soco, 🔫 pistola (quase iguais visualmente), ⚔️ espada com capa branca (habilidade especial).</p>
+        </div>
+        <div class="card">
+          <h3>🐺 Lobisomens <span class="tag">6500–7950</span></h3>
+          <p>De dia parecem aldeões fracos. À noite viram lobisomens poderosos. Na <strong>Lua de Sangue</strong> (evento aleatório) ficam mais agressivos e causam muito mais dano.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">NPCs de missão</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>NPC</th><th>Missão</th><th>Recompensa</th></tr></thead>
+          <tbody>
+            <tr><td>🗺️ Random Quest / Sage Order</td><td>Varia (ex.: eliminar 60 NPCs humanos e voltar)</td><td>XP + dinheiro (varia)</td></tr>
+            <tr><td>🏹 Quest Giver</td><td>HUNT: eliminar 9 caçadores (perto de uma árvore, área externa)</td><td>Não confirmada</td></tr>
+            <tr><td>🐺 Werewolf Hunter</td><td>WEREWOLF HUNT: eliminar 6 lobisomens</td><td>4.500 XP + $450</td></tr>
+            <tr><td>⛏️ Ore Buyer</td><td>Vende minérios (barraca na vila, “Sell Ores”)</td><td>Dinheiro</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px" id="npcs-loja">⚔️ Weapons Shop</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Preço / Receita</th></tr></thead>
+          <tbody>
+            <tr><td>🪵 Wood Stake</td><td>$300</td></tr>
+            <tr><td>🥈 Silver Stake</td><td>1 Wood Stake + 8 Silver Bars</td></tr>
+            <tr><td>🌳 White Oak Stake</td><td>$15.000</td></tr>
+            <tr><td>🗡️ Dagger</td><td>20 Silver + $400</td></tr>
+            <tr><td>⛏️ Pickaxe</td><td>$500</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PASSES -->
+    <section class="block" id="passes">
+      <h2>🎟️ Game Passes</h2>
+      <p class="sub">Preços da loja do Roblox em 25/10/2026 (podem estar em promoção no jogo).</p>
+      <div class="grid">
+        <div class="card pass">
+          <img src="assets/img/pass-original.png" alt="" width="64" height="64">
+          <div>
+            <h3>Original Vampire</h3>
+            <div class="price">1.895 Robux</div>
+            <p class="muted">Mais força e resistência, imune a ataques em geral. Só uma estaca especial (cara) pode matar. Libera o caminho para o <a href="#hibrido">Híbrido OG</a>.</p>
+          </div>
+        </div>
+        <div class="card pass">
+          <img src="assets/img/pass-sunring.png" alt="" width="64" height="64">
+          <div>
+            <h3>Sun Ring</h3>
+            <div class="price">695 Robux</div>
+            <p class="muted">Anel com imunidade ao sol, mais força, mais velocidade e <strong>2× XP ilimitado</strong>.</p>
+          </div>
+        </div>
+        <div class="card pass">
+          <img src="assets/img/pass-save.png" alt="" width="64" height="64">
+          <div>
+            <h3>Save Progress</h3>
+            <div class="price">495 Robux</div>
+            <p class="muted">Salva o progresso. O efeito exato ainda não foi documentado.</p>
+          </div>
+        </div>
+        <div class="card pass">
+          <img src="assets/img/pass-hide.png" alt="" width="64" height="64">
+          <div>
+            <h3>Hide Level &amp; Gear</h3>
+            <div class="price">395 Robux</div>
+            <p class="muted">Para roleplay: esconde seu nível e equipamento. Use <code>/hide</code> e <code>/unhide</code>.</p>
+          </div>
+        </div>
+        <div class="card pass">
+          <img src="assets/img/pass-tag.png" alt="" width="64" height="64">
+          <div>
+            <h3>Custom Tag</h3>
+            <div class="price">395 Robux</div>
+            <p class="muted">Tag personalizada acima do nome, com cor RGB. Veja os <a href="#comandos">comandos</a>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMANDOS -->
+    <section class="block" id="comandos">
+      <h2>⌨️ Comandos</h2>
+      <p class="sub">Clique em qualquer comando para copiar.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>👑 Bloodline <span class="tag">nível 800</span></h3>
+          <table>
+            <tbody>
+              <tr><td><code class="cp">/bloodline NOME</code></td><td class="muted">criar</td></tr>
+              <tr><td><code class="cp">/editbloodline NOME</code></td><td class="muted">editar</td></tr>
+              <tr><td><code class="cp">/delbloodline</code></td><td class="muted">apagar</td></tr>
+              <tr><td><code class="cp">/blinvite JOGADOR</code></td><td class="muted">convidar</td></tr>
+              <tr><td><code class="cp">/blaccept</code></td><td class="muted">aceitar convite</td></tr>
+              <tr><td><code class="cp">/bldecline</code></td><td class="muted">recusar convite</td></tr>
+              <tr><td><code class="cp">/blkick JOGADOR</code></td><td class="muted">expulsar</td></tr>
+              <tr><td><code class="cp">/blleave</code></td><td class="muted">sair</td></tr>
+              <tr><td><code class="cp">/blmembers</code></td><td class="muted">ver membros</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>🏷️ Custom Tag</h3>
+          <table>
+            <tbody>
+              <tr><td><code class="cp">/tag Seu Texto</code></td><td class="muted">cor padrão</td></tr>
+              <tr><td><code class="cp">/tag R, G, B Seu Texto</code></td><td class="muted">cor RGB</td></tr>
+              <tr><td><code class="cp">/editag Novo Texto</code></td><td class="muted">editar</td></tr>
+              <tr><td><code class="cp">/Retag</code></td><td class="muted">remover</td></tr>
+            </tbody>
+          </table>
+          <p class="muted" style="margin-top:10px">Clique numa cor para copiar um exemplo pronto:</p>
+          <div class="swatches" id="swatches"></div>
+        </div>
+        <div class="card">
+          <h3>🎭 Outros</h3>
+          <table>
+            <tbody>
+              <tr><td><code class="cp">/hide</code></td><td class="muted">esconder nível (pass)</td></tr>
+              <tr><td><code class="cp">/unhide</code></td><td class="muted">mostrar nível</td></tr>
+              <tr><td><code class="cp">Quaerere NOME</code></td><td class="muted">rastrear (bruxa)</td></tr>
+              <tr><td><code class="cp">Sanguis tuus vita mea</code></td><td class="muted">imortalidade (bruxa)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODIGOS -->
+    <section class="block" id="codigos">
+      <h2>🎟️ Códigos</h2>
+      <p class="sub">Divulgados no Discord entre 3 e 19/10/2026. Diferencia maiúsculas. Podem expirar ou ter limite de uso.</p>
+      <div class="codes" id="codes"></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Guia oficial do Vampire Life. Não afiliado à Roblox Corporation.<br>
+    Dados podem mudar com atualizações.</p>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Voltar ao topo">↑</button>
+
+<script>
+  // Farming ranges (max level on the scale: 8000)
+  const farm = [
+    ['🧍 Humanos', 0, 70],
+    ['🛡️ Guardas', 70, 250],
+    ['🏹 Caçadores área 1', 250, 700],
+    ['🏹 Caçadores área 2', 1000, 2900],
+    ['🐺 Lobisomens (noite)', 6500, 7950],
+  ];
+  const MAX = 8000;
+  document.getElementById('farm').innerHTML = farm.map(([name, a, b]) => {
+    const left = a / MAX * 100, width = Math.max((b - a) / MAX * 100, 1.5);
+    return `<div class="farm-row"><span>${name}</span><div class="bar"><div class="fill" style="left:${left}%;width:${width}%"><span style="${width < 12 ? 'position:absolute;left:100%;margin-left:6px;color:var(--text)' : ''}">${a}–${b}</span></div></div></div>`;
+  }).join('');
+
+  const codes = [
+    ['KAISERTORTOYT', '2× XP por 2 h'],
+    ['WFEEDVAMPS', '4× XP por 1 h'],
+    ['WITCHESFARMSER', '2× XP por 2 h'],
+    ['THX9KLIKES', '3× XP por 1 h'],
+    ['THX10KLIKES26', '4× XP por 30 min'],
+    ['UPDATEUIMOBILE', '3× XP por 1 h'],
+    ['11KLIKESTHX', '4× XP por 2 h'],
+    ['THX12KLIKES', '2× XP por 2 h + 400.000 de dinheiro'],
+    ['THX14KLIKES', '4× XP por 30 min'],
+  ];
+  document.getElementById('codes').innerHTML = codes.map(([c, r]) =>
+    `<div class="code"><div><b>${c}</b><div class="muted">${r}</div></div><button class="copy" data-copy="${c}">Copiar</button></div>`
+  ).join('');
+
+  const colors = [
+    ['Vermelho', '255, 0, 0'], ['Carmesim', '220, 20, 60'], ['Vermelho escuro', '139, 0, 0'], ['Laranja', '255, 165, 0'],
+    ['Dourado', '255, 215, 0'], ['Amarelo', '255, 255, 0'], ['Lima', '0, 255, 0'], ['Verde', '0, 128, 0'],
+    ['Ciano', '0, 255, 255'], ['Azul céu', '0, 191, 255'], ['Azul', '0, 0, 255'], ['Marinho', '0, 0, 128'],
+    ['Roxo', '128, 0, 128'], ['Magenta', '255, 0, 255'], ['Rosa', '255, 105, 180'], ['Branco', '255, 255, 255'],
+    ['Prata', '192, 192, 192'], ['Cinza', '128, 128, 128'], ['Preto', '0, 0, 0'], ['Marrom', '139, 69, 19'],
+  ];
+  document.getElementById('swatches').innerHTML = colors.map(([n, rgb]) =>
+    `<button class="swatch" data-copy="/tag ${rgb} Vampire King"><i style="background:rgb(${rgb})"></i><span>${n}<small>${rgb}</small></span></button>`
+  ).join('');
+
+  // Copy to clipboard
+  document.querySelectorAll('code.cp').forEach(el => { el.dataset.copy = el.textContent; el.setAttribute('role', 'button'); el.tabIndex = 0; el.style.cursor = 'pointer'; el.title = 'Copiar'; });
+  async function copy(el) {
+    try { await navigator.clipboard.writeText(el.dataset.copy); } catch (e) { return; }
+    const isBtn = el.classList.contains('copy');
+    const old = isBtn ? el.textContent : null;
+    if (isBtn) { el.textContent = 'Copiado!'; el.classList.add('ok'); }
+    else { el.style.borderColor = 'var(--red)'; }
+    setTimeout(() => { if (isBtn) { el.textContent = old; el.classList.remove('ok'); } else el.style.borderColor = ''; }, 1200);
+  }
+  document.addEventListener('click', e => { const el = e.target.closest('[data-copy]'); if (el) copy(el); });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('code.cp')) copy(e.target); });
+
+  // Search: filter cards, table rows, and codes
+  const q = document.getElementById('q'), hint = document.getElementById('hint');
+  const items = [...document.querySelectorAll('.block .card, .block tbody tr, .block .code')]
+    .filter(el => !el.closest('.card tbody') || el.matches('.card'));
+  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  q.addEventListener('input', () => {
+    const term = norm(q.value.trim());
+    let n = 0;
+    items.forEach(el => {
+      const hit = !term || norm(el.textContent).includes(term);
+      el.classList.toggle('hidden', !hit);
+      if (hit && term) { n++; if (el.tagName === 'DETAILS') el.open = true; }
+    });
+    document.querySelectorAll('.block').forEach(sec => {
+      const any = !term || sec.querySelector('.card:not(.hidden), tbody tr:not(.hidden), .code:not(.hidden)');
+      sec.classList.toggle('hidden', !any);
+      sec.querySelectorAll('.table-wrap').forEach(t => t.classList.toggle('hidden', !!term && !t.querySelector('tr:not(.hidden)')));
+    });
+    hint.textContent = term ? (n ? `${n} resultado${n > 1 ? 's' : ''}` : 'Nada encontrado. Tente outro termo.') : '';
+  });
+
+  // Active nav link + back to top
+  const links = [...document.querySelectorAll('nav.links a')];
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + en.target.id;
+        a.classList.toggle('active', on);
+        if (on) { const nav = a.parentElement; nav.scrollLeft = a.offsetLeft - nav.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2; }
+      });
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('section.block').forEach(s => spy.observe(s));
+  const top = document.getElementById('totop');
+  addEventListener('scroll', () => top.classList.toggle('show', scrollY > 600), { passive: true });
+  top.addEventListener('click', () => scrollTo({ top: 0 }));
+</script>
+</body>
+</html>
