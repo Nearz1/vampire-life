@@ -163,11 +163,26 @@
   .copy:hover { border-color: var(--red); }
   .copy.ok { background: var(--red); border-color: var(--red); color: #fff; }
 
-  /* Color swatches */
-  .swatches { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); margin-top: 12px; }
-  .swatch { display: flex; align-items: center; gap: 8px; font-size: .85rem; background: var(--surface-2); border-radius: 8px; padding: 6px 8px; border: 1px solid var(--line); cursor: pointer; color: var(--text); font-family: inherit; text-align: left; }
-  .swatch i { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(255,255,255,.25); flex-shrink: 0; }
-  .swatch small { color: var(--muted); display: block; font-family: ui-monospace, Consolas, monospace; }
+  /* Custom tag maker */
+  .tagmaker { margin-top: 14px; display: grid; gap: 10px; }
+  .tagmaker p { margin: 0; }
+  .tm-inputs { display: flex; gap: 8px; }
+  .tm-inputs input[type=color] {
+    width: 46px; height: 42px; padding: 3px; border-radius: 8px; flex-shrink: 0;
+    background: var(--surface-2); border: 1px solid var(--line); cursor: pointer;
+  }
+  .tm-inputs input[type=text] {
+    flex: 1; min-width: 0; padding: 0 12px; border-radius: 8px; font: inherit;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--text);
+  }
+  .tm-preview {
+    display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px 10px;
+    border-radius: 10px; background: linear-gradient(#2b3a4a, #1a222c);
+    font-family: "Arial Black", Arial, sans-serif; text-align: center; overflow-wrap: anywhere;
+  }
+  #tmPreview { font-size: 1.1rem; font-weight: 900; text-shadow: 0 1px 2px #000, 0 0 1px #000; }
+  #tmPlayer { color: #fff; font-size: .85rem; text-shadow: 0 1px 2px #000; }
+  .tagmaker .code b { font-size: .85rem; }
 
   details.card summary { cursor: pointer; font-weight: 600; }
   details.card[open] summary { margin-bottom: 10px; }
@@ -710,8 +725,21 @@
               <tr><td><code class="cp">/Retag</code></td><td class="muted">remover</td></tr>
             </tbody>
           </table>
-          <p class="muted" style="margin-top:10px">Clique numa cor para copiar um exemplo pronto:</p>
-          <div class="swatches" id="swatches"></div>
+          <div class="tagmaker" id="tagmaker">
+            <p class="muted" id="tmTitle">Monte sua tag:</p>
+            <div class="tm-inputs">
+              <input type="color" id="tmColor" value="#dc143c" aria-label="Cor">
+              <input type="text" id="tmText" value="Vampire King" maxlength="30" aria-label="Texto da tag">
+            </div>
+            <div class="tm-preview" aria-hidden="true">
+              <span id="tmPreview">Vampire King</span>
+              <small id="tmPlayer">Jogador</small>
+            </div>
+            <div class="code">
+              <b id="tmCmd">/tag 220, 20, 60 Vampire King</b>
+              <button class="copy" id="tmCopy" data-copy="/tag 220, 20, 60 Vampire King">Copiar</button>
+            </div>
+          </div>
         </div>
         <div class="card">
           <h3>🎭 Outros</h3>
@@ -761,6 +789,10 @@
     result: ['resultado', 'result', 'resultado'],
     results: ['resultados', 'results', 'resultados'],
     top: ['Voltar ao topo', 'Back to top', 'Volver arriba'],
+    tmTitle: ['Monte sua tag:', 'Build your tag:', 'Crea tu etiqueta:'],
+    tmPlayer: ['Jogador', 'Player', 'Jugador'],
+    tmColor: ['Cor da tag', 'Tag color', 'Color de la etiqueta'],
+    tmText: ['Texto da tag', 'Tag text', 'Texto de la etiqueta'],
   };
 
   // Farming ranges (max level on the scale: 8000)
@@ -785,18 +817,21 @@
     ['THX14KLIKES', ['4× XP por 30 min', '4× XP for 30 min', '4× XP por 30 min']],
   ];
 
-  const colors = [
-    [['Vermelho', 'Red', 'Rojo'], '255, 0, 0'], [['Carmesim', 'Crimson', 'Carmesí'], '220, 20, 60'],
-    [['Vermelho escuro', 'Dark red', 'Rojo oscuro'], '139, 0, 0'], [['Laranja', 'Orange', 'Naranja'], '255, 165, 0'],
-    [['Dourado', 'Gold', 'Dorado'], '255, 215, 0'], [['Amarelo', 'Yellow', 'Amarillo'], '255, 255, 0'],
-    [['Lima', 'Lime', 'Lima'], '0, 255, 0'], [['Verde', 'Green', 'Verde'], '0, 128, 0'],
-    [['Ciano', 'Cyan', 'Cian'], '0, 255, 255'], [['Azul céu', 'Sky blue', 'Azul cielo'], '0, 191, 255'],
-    [['Azul', 'Blue', 'Azul'], '0, 0, 255'], [['Marinho', 'Navy', 'Marino'], '0, 0, 128'],
-    [['Roxo', 'Purple', 'Morado'], '128, 0, 128'], [['Magenta', 'Magenta', 'Magenta'], '255, 0, 255'],
-    [['Rosa', 'Pink', 'Rosa'], '255, 105, 180'], [['Branco', 'White', 'Blanco'], '255, 255, 255'],
-    [['Prata', 'Silver', 'Plata'], '192, 192, 192'], [['Cinza', 'Gray', 'Gris'], '128, 128, 128'],
-    [['Preto', 'Black', 'Negro'], '0, 0, 0'], [['Marrom', 'Brown', 'Marrón'], '139, 69, 19'],
-  ];
+  // Custom tag maker: color picker + text -> live preview and /tag R, G, B command
+  const tm = id => document.getElementById(id);
+  function updateTag() {
+    const hex = tm('tmColor').value;
+    const rgb = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).join(', ');
+    const text = tm('tmText').value.trim() || 'Vampire King';
+    const cmd = `/tag ${rgb} ${text}`;
+    tm('tmPreview').textContent = text;
+    tm('tmPreview').style.color = hex;
+    tm('tmCmd').textContent = cmd;
+    tm('tmCopy').dataset.copy = cmd;
+  }
+  tm('tmColor').addEventListener('input', updateTag);
+  tm('tmText').addEventListener('input', updateTag);
+  updateTag();
 
   function renderDynamic() {
     document.getElementById('farm').innerHTML = farm.map(([name, a, b]) => {
@@ -806,9 +841,11 @@
     document.getElementById('codes').innerHTML = codes.map(([c, r]) =>
       `<div class="code"><div><b>${c}</b><div class="muted">${L(r)}</div></div><button class="copy" data-copy="${c}">${L(UI.copy)}</button></div>`
     ).join('');
-    document.getElementById('swatches').innerHTML = colors.map(([n, rgb]) =>
-      `<button class="swatch" data-copy="/tag ${rgb} Vampire King"><i style="background:rgb(${rgb})"></i><span>${L(n)}<small>${rgb}</small></span></button>`
-    ).join('');
+    tm('tmTitle').textContent = L(UI.tmTitle);
+    tm('tmPlayer').textContent = L(UI.tmPlayer);
+    tm('tmColor').setAttribute('aria-label', L(UI.tmColor));
+    tm('tmText').setAttribute('aria-label', L(UI.tmText));
+    tm('tmCopy').textContent = L(UI.copy);
   }
 
   // Static text: every block whose children are only inline tags is a translatable "leaf",
@@ -819,7 +856,7 @@
   const leaves = [];
   (function walk(el) {
     const tag = el.tagName.toUpperCase();
-    if (SKIP.has(tag) || ['farm', 'codes', 'swatches'].includes(el.id)) return;
+    if (SKIP.has(tag) || ['farm', 'codes', 'tagmaker'].includes(el.id)) return;
     const kids = [...el.children];
     if (el !== document.body && el.textContent.trim() && kids.every(k => INLINE.has(k.tagName.toUpperCase()))) {
       leaves.push({ el, pt: el.innerHTML, key: norm(el.textContent) });
