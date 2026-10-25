@@ -67,6 +67,10 @@
     padding: 6px 10px; border-radius: 8px; white-space: nowrap;
   }
   nav.links a:hover, nav.links a.active { color: var(--text); background: var(--surface-2); }
+  .lang {
+    background: var(--surface); color: var(--text); border: 1px solid var(--line);
+    border-radius: 8px; padding: 6px 8px; font: 600 .85rem Inter, sans-serif; cursor: pointer; flex-shrink: 0;
+  }
 
   /* Hero */
   .hero { position: relative; text-align: center; padding: 48px 0 40px; overflow: hidden; }
@@ -207,6 +211,11 @@
       <a href="#comandos">Comandos</a>
       <a href="#codigos">Códigos</a>
     </nav>
+    <select id="lang" class="lang" aria-label="Idioma / Language">
+      <option value="pt">PT</option>
+      <option value="en">EN</option>
+      <option value="es">ES</option>
+    </select>
   </div>
 </header>
 
@@ -736,70 +745,160 @@
 
 <button class="totop" id="totop" aria-label="Voltar ao topo">↑</button>
 
+<script src="assets/i18n.js"></script>
 <script>
+  // Languages: index 0 = pt (source), 1 = en, 2 = es
+  const LANGS = ['pt', 'en', 'es'];
+  let li = 0;
+  const L = arr => arr[li];
+
+  const UI = {
+    title: ['Vampire Life — Guia', 'Vampire Life — Guide', 'Vampire Life — Guía'],
+    copy: ['Copiar', 'Copy', 'Copiar'],
+    copied: ['Copiado!', 'Copied!', '¡Copiado!'],
+    search: ['Buscar: Neck Break, velas, nível 800, código…', 'Search: Neck Break, candles, level 800, code…', 'Buscar: Neck Break, velas, nivel 800, código…'],
+    none: ['Nada encontrado. Tente outro termo.', 'Nothing found. Try another term.', 'No se encontró nada. Prueba otro término.'],
+    result: ['resultado', 'result', 'resultado'],
+    results: ['resultados', 'results', 'resultados'],
+    top: ['Voltar ao topo', 'Back to top', 'Volver arriba'],
+  };
+
   // Farming ranges (max level on the scale: 8000)
   const farm = [
-    ['🧍 Humanos', 0, 70],
-    ['🛡️ Guardas', 70, 250],
-    ['🏹 Caçadores área 1', 250, 700],
-    ['🏹 Caçadores área 2', 1000, 2900],
-    ['🐺 Lobisomens (noite)', 6500, 7950],
+    [['🧍 Humanos', '🧍 Humans', '🧍 Humanos'], 0, 70],
+    [['🛡️ Guardas', '🛡️ Guards', '🛡️ Guardias'], 70, 250],
+    [['🏹 Caçadores área 1', '🏹 Hunters area 1', '🏹 Cazadores área 1'], 250, 700],
+    [['🏹 Caçadores área 2', '🏹 Hunters area 2', '🏹 Cazadores área 2'], 1000, 2900],
+    [['🐺 Lobisomens (noite)', '🐺 Werewolves (night)', '🐺 Hombres lobo (noche)'], 6500, 7950],
   ];
   const MAX = 8000;
-  document.getElementById('farm').innerHTML = farm.map(([name, a, b]) => {
-    const left = a / MAX * 100, width = Math.max((b - a) / MAX * 100, 1.5);
-    return `<div class="farm-row"><span>${name}</span><div class="bar"><div class="fill" style="left:${left}%;width:${width}%"><span style="${width < 12 ? 'position:absolute;left:100%;margin-left:6px;color:var(--text)' : ''}">${a}–${b}</span></div></div></div>`;
-  }).join('');
 
   const codes = [
-    ['KAISERTORTOYT', '2× XP por 2 h'],
-    ['WFEEDVAMPS', '4× XP por 1 h'],
-    ['WITCHESFARMSER', '2× XP por 2 h'],
-    ['THX9KLIKES', '3× XP por 1 h'],
-    ['THX10KLIKES26', '4× XP por 30 min'],
-    ['UPDATEUIMOBILE', '3× XP por 1 h'],
-    ['11KLIKESTHX', '4× XP por 2 h'],
-    ['THX12KLIKES', '2× XP por 2 h + 400.000 de dinheiro'],
-    ['THX14KLIKES', '4× XP por 30 min'],
+    ['KAISERTORTOYT', ['2× XP por 2 h', '2× XP for 2 h', '2× XP por 2 h']],
+    ['WFEEDVAMPS', ['4× XP por 1 h', '4× XP for 1 h', '4× XP por 1 h']],
+    ['WITCHESFARMSER', ['2× XP por 2 h', '2× XP for 2 h', '2× XP por 2 h']],
+    ['THX9KLIKES', ['3× XP por 1 h', '3× XP for 1 h', '3× XP por 1 h']],
+    ['THX10KLIKES26', ['4× XP por 30 min', '4× XP for 30 min', '4× XP por 30 min']],
+    ['UPDATEUIMOBILE', ['3× XP por 1 h', '3× XP for 1 h', '3× XP por 1 h']],
+    ['11KLIKESTHX', ['4× XP por 2 h', '4× XP for 2 h', '4× XP por 2 h']],
+    ['THX12KLIKES', ['2× XP por 2 h + 400.000 de dinheiro', '2× XP for 2 h + 400,000 money', '2× XP por 2 h + 400.000 de dinero']],
+    ['THX14KLIKES', ['4× XP por 30 min', '4× XP for 30 min', '4× XP por 30 min']],
   ];
-  document.getElementById('codes').innerHTML = codes.map(([c, r]) =>
-    `<div class="code"><div><b>${c}</b><div class="muted">${r}</div></div><button class="copy" data-copy="${c}">Copiar</button></div>`
-  ).join('');
 
   const colors = [
-    ['Vermelho', '255, 0, 0'], ['Carmesim', '220, 20, 60'], ['Vermelho escuro', '139, 0, 0'], ['Laranja', '255, 165, 0'],
-    ['Dourado', '255, 215, 0'], ['Amarelo', '255, 255, 0'], ['Lima', '0, 255, 0'], ['Verde', '0, 128, 0'],
-    ['Ciano', '0, 255, 255'], ['Azul céu', '0, 191, 255'], ['Azul', '0, 0, 255'], ['Marinho', '0, 0, 128'],
-    ['Roxo', '128, 0, 128'], ['Magenta', '255, 0, 255'], ['Rosa', '255, 105, 180'], ['Branco', '255, 255, 255'],
-    ['Prata', '192, 192, 192'], ['Cinza', '128, 128, 128'], ['Preto', '0, 0, 0'], ['Marrom', '139, 69, 19'],
+    [['Vermelho', 'Red', 'Rojo'], '255, 0, 0'], [['Carmesim', 'Crimson', 'Carmesí'], '220, 20, 60'],
+    [['Vermelho escuro', 'Dark red', 'Rojo oscuro'], '139, 0, 0'], [['Laranja', 'Orange', 'Naranja'], '255, 165, 0'],
+    [['Dourado', 'Gold', 'Dorado'], '255, 215, 0'], [['Amarelo', 'Yellow', 'Amarillo'], '255, 255, 0'],
+    [['Lima', 'Lime', 'Lima'], '0, 255, 0'], [['Verde', 'Green', 'Verde'], '0, 128, 0'],
+    [['Ciano', 'Cyan', 'Cian'], '0, 255, 255'], [['Azul céu', 'Sky blue', 'Azul cielo'], '0, 191, 255'],
+    [['Azul', 'Blue', 'Azul'], '0, 0, 255'], [['Marinho', 'Navy', 'Marino'], '0, 0, 128'],
+    [['Roxo', 'Purple', 'Morado'], '128, 0, 128'], [['Magenta', 'Magenta', 'Magenta'], '255, 0, 255'],
+    [['Rosa', 'Pink', 'Rosa'], '255, 105, 180'], [['Branco', 'White', 'Blanco'], '255, 255, 255'],
+    [['Prata', 'Silver', 'Plata'], '192, 192, 192'], [['Cinza', 'Gray', 'Gris'], '128, 128, 128'],
+    [['Preto', 'Black', 'Negro'], '0, 0, 0'], [['Marrom', 'Brown', 'Marrón'], '139, 69, 19'],
   ];
-  document.getElementById('swatches').innerHTML = colors.map(([n, rgb]) =>
-    `<button class="swatch" data-copy="/tag ${rgb} Vampire King"><i style="background:rgb(${rgb})"></i><span>${n}<small>${rgb}</small></span></button>`
-  ).join('');
+
+  function renderDynamic() {
+    document.getElementById('farm').innerHTML = farm.map(([name, a, b]) => {
+      const left = a / MAX * 100, width = Math.max((b - a) / MAX * 100, 1.5);
+      return `<div class="farm-row"><span>${L(name)}</span><div class="bar"><div class="fill" style="left:${left}%;width:${width}%"><span style="${width < 12 ? 'position:absolute;left:100%;margin-left:6px;color:var(--text)' : ''}">${a}–${b}</span></div></div></div>`;
+    }).join('');
+    document.getElementById('codes').innerHTML = codes.map(([c, r]) =>
+      `<div class="code"><div><b>${c}</b><div class="muted">${L(r)}</div></div><button class="copy" data-copy="${c}">${L(UI.copy)}</button></div>`
+    ).join('');
+    document.getElementById('swatches').innerHTML = colors.map(([n, rgb]) =>
+      `<button class="swatch" data-copy="/tag ${rgb} Vampire King"><i style="background:rgb(${rgb})"></i><span>${L(n)}<small>${rgb}</small></span></button>`
+    ).join('');
+  }
+
+  // Static text: every block whose children are only inline tags is a translatable "leaf",
+  // looked up in I18N by its normalized Portuguese text
+  const INLINE = new Set(['STRONG', 'EM', 'B', 'I', 'CODE', 'A', 'SPAN', 'BR', 'SMALL', 'KBD', 'MARK']);
+  const SKIP = new Set(['SCRIPT', 'STYLE', 'SVG', 'NOSCRIPT', 'INPUT', 'IMG', 'SELECT']);
+  const norm = s => s.replace(/\s+/g, ' ').trim();
+  const leaves = [];
+  (function walk(el) {
+    const tag = el.tagName.toUpperCase();
+    if (SKIP.has(tag) || ['farm', 'codes', 'swatches'].includes(el.id)) return;
+    const kids = [...el.children];
+    if (el !== document.body && el.textContent.trim() && kids.every(k => INLINE.has(k.tagName.toUpperCase()))) {
+      leaves.push({ el, pt: el.innerHTML, key: norm(el.textContent) });
+      return;
+    }
+    kids.forEach(walk);
+  })(document.body);
+
+  function setupCopyCodes() {
+    document.querySelectorAll('code.cp').forEach(el => { el.dataset.copy = el.textContent; el.setAttribute('role', 'button'); el.tabIndex = 0; el.style.cursor = 'pointer'; el.title = L(UI.copy); });
+  }
+
+  const q = document.getElementById('q'), hint = document.getElementById('hint');
+  const langSel = document.getElementById('lang');
+
+  function setLang(lang) {
+    li = Math.max(0, LANGS.indexOf(lang));
+    document.documentElement.lang = ['pt-BR', 'en', 'es'][li];
+    document.title = L(UI.title);
+    leaves.forEach(o => {
+      const tr = window.I18N && I18N[o.key];
+      o.el.innerHTML = li === 0 || !tr ? o.pt : tr[li - 1];
+    });
+    renderDynamic();
+    setupCopyCodes();
+    q.placeholder = L(UI.search);
+    document.getElementById('totop').setAttribute('aria-label', L(UI.top));
+    langSel.value = LANGS[li];
+    if (q.value) q.dispatchEvent(new Event('input'));
+  }
+
+  // Language detection: manual choice > visitor's country (by IP) > browser language
+  const PT_COUNTRIES = 'BR PT AO MZ CV GW ST TL'.split(' ');
+  const ES_COUNTRIES = 'AR BO CL CO CR CU DO EC SV GQ GT HN MX NI PA PY PE PR ES UY VE'.split(' ');
+  const byCountry = c => PT_COUNTRIES.includes(c) ? 'pt' : ES_COUNTRIES.includes(c) ? 'es' : 'en';
+  const byBrowser = () => { const l = (navigator.language || 'pt').slice(0, 2).toLowerCase(); return LANGS.includes(l) ? l : 'en'; };
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+
+  langSel.addEventListener('change', () => { store.set('vl-lang', langSel.value); setLang(langSel.value); });
+
+  // The last detected language is shown instantly, then the IP is checked again on every visit
+  const chosen = store.get('vl-lang'), geo = store.get('vl-geo');
+  setLang(chosen || geo || byBrowser());
+  if (!chosen) {
+    const ctl = new AbortController();
+    setTimeout(() => ctl.abort(), 3000);
+    fetch('https://get.geojs.io/v1/ip/country.json', { signal: ctl.signal })
+      .then(r => r.json())
+      .then(({ country }) => {
+        const l = byCountry(String(country).toUpperCase());
+        store.set('vl-geo', l);
+        if (!store.get('vl-lang') && l !== LANGS[li]) setLang(l);
+      })
+      .catch(() => {});
+  }
 
   // Copy to clipboard
-  document.querySelectorAll('code.cp').forEach(el => { el.dataset.copy = el.textContent; el.setAttribute('role', 'button'); el.tabIndex = 0; el.style.cursor = 'pointer'; el.title = 'Copiar'; });
   async function copy(el) {
     try { await navigator.clipboard.writeText(el.dataset.copy); } catch (e) { return; }
     const isBtn = el.classList.contains('copy');
-    const old = isBtn ? el.textContent : null;
-    if (isBtn) { el.textContent = 'Copiado!'; el.classList.add('ok'); }
+    if (isBtn) { el.textContent = L(UI.copied); el.classList.add('ok'); }
     else { el.style.borderColor = 'var(--red)'; }
-    setTimeout(() => { if (isBtn) { el.textContent = old; el.classList.remove('ok'); } else el.style.borderColor = ''; }, 1200);
+    setTimeout(() => { if (isBtn) { el.textContent = L(UI.copy); el.classList.remove('ok'); } else el.style.borderColor = ''; }, 1200);
   }
   document.addEventListener('click', e => { const el = e.target.closest('[data-copy]'); if (el) copy(el); });
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('code.cp')) copy(e.target); });
 
   // Search: filter cards, table rows, and codes
-  const q = document.getElementById('q'), hint = document.getElementById('hint');
-  const items = [...document.querySelectorAll('.block .card, .block tbody tr, .block .code')]
+  const searchItems = () => [...document.querySelectorAll('.block .card, .block tbody tr, .block .code')]
     .filter(el => !el.closest('.card tbody') || el.matches('.card'));
-  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   q.addEventListener('input', () => {
-    const term = norm(q.value.trim());
+    const term = fold(q.value.trim());
     let n = 0;
-    items.forEach(el => {
-      const hit = !term || norm(el.textContent).includes(term);
+    searchItems().forEach(el => {
+      const hit = !term || fold(el.textContent).includes(term);
       el.classList.toggle('hidden', !hit);
       if (hit && term) { n++; if (el.tagName === 'DETAILS') el.open = true; }
     });
@@ -808,15 +907,14 @@
       sec.classList.toggle('hidden', !any);
       sec.querySelectorAll('.table-wrap').forEach(t => t.classList.toggle('hidden', !!term && !t.querySelector('tr:not(.hidden)')));
     });
-    hint.textContent = term ? (n ? `${n} resultado${n > 1 ? 's' : ''}` : 'Nada encontrado. Tente outro termo.') : '';
+    hint.textContent = term ? (n ? `${n} ${L(n > 1 ? UI.results : UI.result)}` : L(UI.none)) : '';
   });
 
   // Active nav link + back to top
-  const links = [...document.querySelectorAll('nav.links a')];
   const spy = new IntersectionObserver(entries => {
     entries.forEach(en => {
       if (!en.isIntersecting) return;
-      links.forEach(a => {
+      document.querySelectorAll('nav.links a').forEach(a => {
         const on = a.getAttribute('href') === '#' + en.target.id;
         a.classList.toggle('active', on);
         if (on) { const nav = a.parentElement; nav.scrollLeft = a.offsetLeft - nav.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2; }
@@ -824,9 +922,9 @@
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
   document.querySelectorAll('section.block').forEach(s => spy.observe(s));
-  const top = document.getElementById('totop');
-  addEventListener('scroll', () => top.classList.toggle('show', scrollY > 600), { passive: true });
-  top.addEventListener('click', () => scrollTo({ top: 0 }));
+  const toTop = document.getElementById('totop');
+  addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 600), { passive: true });
+  toTop.addEventListener('click', () => scrollTo({ top: 0 }));
 </script>
 </body>
 </html>
